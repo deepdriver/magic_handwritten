@@ -67,7 +67,7 @@ def main():
     infer.open()
     img_path = 'samples/2.jpg'
     num = infer.inference_img(img_path)
-    print(num)
+    print('Image path: "{path}"\nRecognition result: {num}'.format(path=img_path, num=num))
     infer.close()
 
 
