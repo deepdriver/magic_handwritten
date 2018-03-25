@@ -14,18 +14,25 @@ def load_one(img_path):
     :param img_path:
     :return:
     '''
-    data = np.ndarray(shape=[1, config.IMAGE_SIZE, config.IMAGE_SIZE, config.NUM_CHANNELS])
-    img = cv2.imread('samples/2.jpg', cv2.IMREAD_GRAYSCALE)
-    img = resize(img)
-    data[0, :, :, 0] = img
-    return data
+    img = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
+    return prepare_data(img)
 
 
-def resize(img_data):
+def resize(img_data) -> np.ndarray:
     '''
 
     :param img_data: 图像矩阵
     :return: 28*28的图像
     '''
+    target_shape = (config.IMAGE_SIZE, config.IMAGE_SIZE)
+    if img_data.shape == target_shape:
+        return img_data
+    ret = cv2.resize(img_data, target_shape, interpolation=cv2.INTER_LINEAR)
+    return ret
 
-    return cv2.resize(img_data, (config.IMAGE_SIZE, config.IMAGE_SIZE), interpolation=cv2.INTER_AREA)
+
+def prepare_data(img_data):
+    data = resize(img_data).astype(np.float32)
+    data = (data - (config.PIXEL_DEPTH / 2.0)) / config.PIXEL_DEPTH
+    data = data.reshape(1, config.IMAGE_SIZE, config.IMAGE_SIZE, config.NUM_CHANNELS)
+    return data

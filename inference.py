@@ -36,16 +36,16 @@ class Inferencer(object):
     def close(self):
         self.__sess.close()
 
-    def __inference_once(self, data: np.ndarray):
+    def inference_once(self, data: np.ndarray):
         shape = (1, config.IMAGE_SIZE, config.IMAGE_SIZE, config.NUM_CHANNELS)
         msg = "The input data must be a numpy.ndarray of shape {shape}.".format(shape=shape)
         if type(data) != np.ndarray or data.shape != shape:
             raise Exception(msg)
 
         result = self.__sess.run(self.__eval_once, feed_dict={self.__eval_data_once: data})
-        return result
+        return np.argmax(result)
 
-    def __inference_batch(self, data: np.ndarray):
+    def inference_batch(self, data: np.ndarray):
         shape = (config.EVAL_BATCH_SIZE, config.IMAGE_SIZE, config.IMAGE_SIZE, config.NUM_CHANNELS)
         msg = "The input data must be a numpy.ndarray of shape {shape}.".format(shape=shape)
         if type(data) != np.ndarray or data.shape != shape:
@@ -55,8 +55,7 @@ class Inferencer(object):
 
     def inference_img(self, img_path):
         data = preprocessing.load_one(img_path)
-        softmax_array = self.__inference_once(data)
-        return np.argmax(softmax_array)
+        return self.inference_once(data)
 
     def get_batch_size(self):
         return config.EVAL_BATCH_SIZE
@@ -65,7 +64,7 @@ class Inferencer(object):
 def main():
     infer = Inferencer()
     infer.open()
-    img_path = 'samples/2.jpg'
+    img_path = 'samples/test.jpg'
     num = infer.inference_img(img_path)
     print('Image path: "{path}"\nRecognition result: {num}'.format(path=img_path, num=num))
     infer.close()
