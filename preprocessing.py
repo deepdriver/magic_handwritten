@@ -27,7 +27,7 @@ def resize(img_data) -> np.ndarray:
     target_shape = (config.IMAGE_SIZE, config.IMAGE_SIZE)
     if img_data.shape == target_shape:
         return img_data
-    ret = cv2.resize(img_data, target_shape, interpolation=cv2.INTER_LINEAR)
+    ret = cv2.resize(img_data, target_shape, interpolation=cv2.INTER_AREA)
     return ret
 
 
